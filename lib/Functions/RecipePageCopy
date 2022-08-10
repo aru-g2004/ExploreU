@@ -1,0 +1,194 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:eyp_cooking_app/Services/SizeConfig.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class RecipePage {
+  List<String> ingredients = [];
+  List<Widget> listofIngredients = [];
+  BuildContext context;
+  List<Widget> steps = [];
+  static Color themeColor = Colors.lightBlue[300];
+
+  void setContext(BuildContext c) {
+    context = c;
+  }
+
+  void setThemeColor(Color c) {
+    themeColor = c;
+  }
+
+  Widget buildIngredients(String foodPic, String foodName) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: themeColor,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(
+                'https://exploreyourpassion708434211.files.wordpress.com/2021/06/image.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.only(
+            left: SizeConfig.blockSizeHorizontal * 20,
+            top: SizeConfig.blockSizeVertical * 5,
+            right: SizeConfig.blockSizeHorizontal * 20,
+          ),
+          // padding: EdgeInsets.fromLTRB(
+          //   SizeConfig.blockSizeHorizontal * 20,
+          //   SizeConfig.blockSizeVertical * 10,
+          //   SizeConfig.blockSizeHorizontal * 20,
+          //   SizeConfig.blockSizeVertical * 20,
+          // ),
+          children: [
+            Center(
+              child: AutoSizeText(foodName,
+                  style: TextStyle(
+                    fontFamily: 'FRED',
+                  )),
+            ),
+            Center(
+              child: SizedBox(
+                  height: SizeConfig.blockSizeVertical * 40,
+                  width: SizeConfig.blockSizeVertical * 40,
+                  child: Image(
+                    image: NetworkImage(
+                      foodPic,
+                    ),
+                  )),
+            ),
+            MaterialButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40)),
+                color: themeColor,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40)),
+                          child: ListView(
+                            children: listofIngredients,
+                          ));
+                    },
+                  );
+                },
+                child: AutoSizeText('Open Ingredients',
+                    style: TextStyle(
+                      fontFamily: 'FRED',
+                    ))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void buildIngredientSearch(List<String> ingredients) {
+    listofIngredients = [];
+
+    listofIngredients.add(SizedBox(height: SizeConfig.screenHeight / 20));
+    listofIngredients.add(
+      Center(
+        child: AutoSizeText('Ingredients',
+            style: TextStyle(
+              fontFamily: 'FRED',
+            )),
+      ),
+    );
+    listofIngredients.add(SizedBox(height: SizeConfig.screenHeight / 20));
+    for (int i = 0; i < ingredients.length - 1; i++) {
+      listofIngredients.add(ListTile(
+        selectedTileColor: themeColor,
+        leading: Icon(Icons.search),
+        title: AutoSizeText(ingredients[i],
+            style: TextStyle(
+              fontFamily: 'FRED',
+            )),
+        onTap: () => launch(
+            'https://www.amazon.com/s?k=' + ingredients[i] + '&ref=nb_sb_noss'),
+      ));
+    }
+    listofIngredients.add(MaterialButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: AutoSizeText('Close',
+            style: TextStyle(
+              fontFamily: 'FRED',
+            )),
+        color: themeColor,
+        textColor: Colors.black,
+        onPressed: () {
+          Navigator.pop(context);
+        }));
+  }
+
+  void RecipeParts(int stepsInRecipe, List<String> recipeGifs,
+      List<int> skillOnStep, List<String> skillNav) {
+    steps = [];
+    for (int s = 1; s <= stepsInRecipe; s++) {
+      steps.add(ListView(children: [
+        Center(
+          child: AutoSizeText(("Step " + s.toString()),
+              style: TextStyle(
+                fontFamily: 'FRED',
+              )),
+        ),
+        Image(
+          image: NetworkImage(recipeGifs.elementAt(s - 1)),
+        ),
+        for (int skill in skillOnStep)
+          if (s == skill)
+            MaterialButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
+              height: SizeConfig.blockSizeVertical * 5,
+              color: themeColor,
+              onPressed: () {
+                Navigator.pushNamed(context, skillNav[skill]);
+              },
+              child: AutoSizeText(
+                'Watch Skill',
+                style: TextStyle(
+                  fontFamily: 'FRED',
+                ),
+              ),
+            ),
+      ]));
+    }
+  }
+
+  Widget VideoCarousel() {
+    return Container(
+      constraints:
+          BoxConstraints.expand(height: MediaQuery.of(context).size.height),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(
+              'https://exploreyourpassion708434211.files.wordpress.com/2021/06/image.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: CarouselSlider(
+        options: CarouselOptions(
+          height: SizeConfig.blockSizeVertical * 70,
+          initialPage: 0,
+          enableInfiniteScroll: true,
+          reverse: false,
+          autoPlay: false,
+          autoPlayInterval: Duration(seconds: 3),
+          autoPlayAnimationDuration: Duration(milliseconds: 800),
+          autoPlayCurve: Curves.fastOutSlowIn,
+          scrollDirection: Axis.horizontal,
+        ),
+        items: steps,
+      ),
+    );
+  }
+}
