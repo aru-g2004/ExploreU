@@ -1,4 +1,4 @@
-# ExploreU [image](https://github.com/aru-g2004/ExploreU/assets/79277193/065e6560-9528-4ad2-9a32-15c68907e885) <img width="496" alt="image" src="https://github.com/aru-g2004/ExploreU/assets/79277193/475be16e-db26-4706-a881-94c0fc933f69">
+# ExploreU <img width="496" alt="image" src="https://github.com/aru-g2004/ExploreU/assets/79277193/065e6560-9528-4ad2-9a32-15c68907e885">
 
 
 This is the repo of the app I have published on the Google Play Store called ExploreU!
